@@ -38,7 +38,7 @@ module Nightlies
 
     def self.enable!(user, repo_id, slug)
       owner, name = slug.split('/', 2)
-      values = {owner: owner, name: name, username: user.login, travis_token: user.attribs['travis_token'], last_nightly: 0}
+      values = {owner: owner, name: name, username: user.login, travis_token: user.attribs['travis_token'], last_nightly: Time.at(0)}
       if db[:nightlies].filter(id: repo_id).update(values) == 0
         db[:nightlies].insert(values.merge(id: repo_id))
       end
