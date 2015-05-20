@@ -14,22 +14,12 @@
 # limitations under the License.
 #
 
-source 'https://rubygems.org'
+require_relative './model'
 
-gem 'sinatra'
-gem 'thin'
-gem 'travis'
-gem 'octokit'
-gem 'warden'
-gem 'warden-github'
-gem 'sinatra_auth_github'
-gem 'sequel'
-gem 'rake'
-
-group :production do
-  gem 'pg'
+task :schema do
+  Nightlies::Model.schema!
 end
 
-group :development do
-  gem 'sqlite3'
+task :run do
+  Nightlies::Model.run!
 end

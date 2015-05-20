@@ -22,6 +22,7 @@ require_relative './warden_travis/strategy'
 # Let's get this party started!
 enable :sessions
 set :session_secret, ENV['GITHUB_VERIFIER_SECRET']
+set :public_folder, 'public'
 
 # Load the GithHub authentication stuffs.
 set :github_options, {scopes: 'read:org user:email repo:status write:repo_hook repo_deployment'}
@@ -39,12 +40,18 @@ use Class.new {
 }
 
 get '/' do
-  'Hello world!'
+  if !authenticated?
+    erb :landing
+  elsif github_user.login == 'coderanger'
+    erb :dashboard
+  else
+    erb :sorry
+  end
 end
 
 get '/login' do
   authenticate!
-  "Hello there, #{github_user.login}! #{github_user.attribs['travis_token'].inspect}"
+  redirect '/'
 end
 
 get '/logout' do

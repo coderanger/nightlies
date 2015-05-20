@@ -1,0 +1,3 @@
+.bundle/config
+.env
+nightlies.db

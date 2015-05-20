@@ -14,22 +14,23 @@
 # limitations under the License.
 #
 
-source 'https://rubygems.org'
+require 'travis'
+require 'warden/github/user'
 
-gem 'sinatra'
-gem 'thin'
-gem 'travis'
-gem 'octokit'
-gem 'warden'
-gem 'warden-github'
-gem 'sinatra_auth_github'
-gem 'sequel'
-gem 'rake'
 
-group :production do
-  gem 'pg'
-end
+module Warden
+  module Travis
+    class User < ::Warden::GitHub::User
 
-group :development do
-  gem 'sqlite3'
+      def travis_token
+        attribs['travis_token']
+      end
+
+      def travis_api
+        raise "No travis token" unless travis_token
+        Travis::Client.new(access_token: travis_token)
+      end
+
+    end
+  end
 end
