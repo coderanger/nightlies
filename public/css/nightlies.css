@@ -6,6 +6,18 @@ p.cta {
   text-align: center
 }
 
+.dashboard-row.saving {
+  position: relative;
+}
+
+.dashboard-row.saving::before {
+  content: "⌛";
+  position: absolute;
+  font-size: 30px;
+  left: -25px;
+  top: -4px;
+}
+
 .dashboard-slug, .dashboard-description {
   line-height: 30px;
 }
