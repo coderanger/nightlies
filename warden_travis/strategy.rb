@@ -18,6 +18,7 @@ require 'travis'
 require 'warden/github/strategy'
 
 
+
 module Warden
   module Travis
     class Strategy < ::Warden::GitHub::Strategy

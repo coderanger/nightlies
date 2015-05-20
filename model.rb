@@ -36,20 +36,26 @@ module Nightlies
       end
     end
 
-    def self.enable!(user, slug)
-      puts "Enabling nightly builds for #{slug} via #{user.login}"
+    def self.enable!(user, repo_id, slug)
       owner, name = slug.split('/', 2)
-      db[:nightlies].insert(username: user.login, owner: owner, name: name, travis_token: user.attribs['travis_token'], last_nightly: 0)
+      values = {owner: owner, name: name, username: user.login, travis_token: user.attribs['travis_token'], last_nightly: 0}
+      if db[:nightlies].filter(id: repo_id).update(values) == 0
+        db[:nightlies].insert(values.merge(id: repo_id))
+      end
     end
 
-    def self.disable!(user, slug)
-      puts "Disabling nightly builds for #{slug} via #{user.login}"
-      owner, name = slug.split('/', 2)
-      db[:nightlies].filter(owner: owner, name: name).delete
+    def self.disable!(user, repo_id)
+      db[:nightlies].filter(id: repo_id).update(travis_token: nil)
+    end
+
+    def self.by_id(repo_id)
+      db[:nightlies].filter(id: repo_id).first
     end
 
     def self.run!
       db[:nightlies].each do |data|
+        # Skip disabled repos.
+        next unless data[:travis_token]
         slug = "#{data[:owner]}/#{data[:name]}"
         puts "Checking #{slug}."
         travis = Travis::Client.new(access_token: data[:travis_token])

@@ -5,3 +5,17 @@ body {
 p.cta {
   text-align: center
 }
+
+.dashboard-slug, .dashboard-description {
+  line-height: 30px;
+}
+
+.dashboard-slug {
+  font-weight: bold;
+  font-size: 130%;
+}
+
+.dashboard-description {
+  font-style: italic;
+  padding-left: 2px;
+}
