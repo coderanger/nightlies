@@ -66,7 +66,7 @@ module Nightlies
           puts "Already building #{slug}"
           next
         end
-        last_build_time = [:last_nightly, Time.iso8601(last_build.finished_at)].max
+        last_build_time = [data[:last_nightly], last_build.finished_at].max
         # Check if it has been 24 hours since the last build.
         if Time.now - last_build_time > 60*60*24
           puts "Requesting a build of #{slug}, last build time #{last_build_time}."
