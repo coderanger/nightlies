@@ -38,7 +38,7 @@ module Nightlies
 
     def self.enable!(user, repo_id, slug)
       owner, name = slug.split('/', 2)
-      values = {owner: owner, name: name, username: user.login, travis_token: user.attribs['travis_token'], last_nightly: Time.at(0)}
+      values = {owner: owner, name: name, username: user.login, travis_token: user.attribs['travis_token']}
       if db[:nightlies].filter(id: repo_id).update(values) == 0
         db[:nightlies].insert(values.merge(id: repo_id))
       end
@@ -66,7 +66,7 @@ module Nightlies
           puts "Already building #{slug}"
           next
         end
-        last_build_time = [data[:last_nightly], last_build.finished_at].max
+        last_build_time = [data[:last_nightly] || Time.at(0), last_build.finished_at].max
         # Check if it has been 24 hours since the last build.
         if Time.now - last_build_time > 60*60*24
           puts "Requesting a build of #{slug}, last build time #{last_build_time}."
