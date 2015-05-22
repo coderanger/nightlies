@@ -60,13 +60,18 @@ module Nightlies
         puts "Checking #{slug}."
         travis = Travis::Client.new(access_token: data[:travis_token])
         repo = travis.repo(slug)
-        last_build = repo.builds(event_type: 'push').first
-        if last_build.pending?
+        # Could speed this up in the future.
+        last_push_build = repo.builds(event_type: 'push').first
+        last_api_build = repo.builds(event_type: 'api').first
+        if (last_push_build && last_push_build.pending?) || (last_api_build && last_api_build.pending?)
           # Currently building, we're done here.
           puts "Already building #{slug}"
           next
         end
-        last_build_time = [data[:last_nightly] || Time.at(0), last_build.finished_at].max
+        build_times = [data[:last_nightly] || Time.at(0)]
+        build_times << last_push_build.finished_at if last_push_build
+        build_times << last_api_build.finished_at if last_api_build
+        last_build_time = build_times.max
         # Check if it has been 24 hours since the last build.
         if Time.now - last_build_time > 60*60*24
           puts "Requesting a build of #{slug}, last build time #{last_build_time}."
