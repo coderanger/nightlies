@@ -75,10 +75,26 @@ module Nightlies
         # Check if it has been 24 hours since the last build.
         if Time.now - last_build_time > 60*60*24
           puts "Requesting a build of #{slug}, last build time #{last_build_time}."
-          travis.post_raw('/requests', request: {repository: {owner_name: data[:owner], name: data[:name]}})
+          self.run_build!(travis, slug)
           db[:nightlies].filter(id: data[:id]).update(last_nightly: Time.now)
         end
       end
     end
+
+    def self.run_build!(travis, slug)
+      encoded_slug = slug.gsub(/\//, '%2F')
+      url = "/repo/#{encoded_slug}/requests"
+      body = {
+        request: {
+          branch: 'master',
+          message: "Nightly build for #{slug} via nightli.es.",
+        },
+      }
+      headers = {
+        'Travis-API-Version' => 3,
+      }
+      travis.post_raw(url, body, headers)
+    end
+
   end
 end
