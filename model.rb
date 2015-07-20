@@ -72,8 +72,10 @@ module Nightlies
         build_times << last_push_build.finished_at if last_push_build
         build_times << last_api_build.finished_at if last_api_build
         last_build_time = build_times.max
-        # Check if it has been 24 hours since the last build.
-        if Time.now - last_build_time > 60*60*24
+        # Check if it has been 23.5 hours since the last build. The 0.5 is so
+        # that if the last build was kicked off by us slightly more than 24
+        # hours ago, we don't drift back by an hour each day.
+        if Time.now - last_build_time > 60*60*23.5
           puts "Requesting a build of #{slug}, last build time #{last_build_time}."
           self.run_build!(travis, slug)
           db[:nightlies].filter(id: data[:id]).update(last_nightly: Time.now)
