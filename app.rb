@@ -71,7 +71,7 @@ module Nightlies
       no_cache!
       if !authenticated?
         erb :landing
-      elsif github_user.login == 'coderanger'
+      else
         @repos = travis_api.get_raw('/hooks')['hooks'].inject([]) do |memo, data|
           if data['admin'] && data['active']
             row = Nightlies::Model.by_id(data['id'])
@@ -84,8 +84,6 @@ module Nightlies
         end
         @extra_js = 'dashboard.js'
         erb :dashboard
-      else
-        erb :sorry
       end
     end
 
