@@ -4,7 +4,25 @@
   <p>
     Nightli.es provides automatic nightly builds for <a href="https://travis-ci.org/">Travis CI</a>.
   </p>
+  <h4>Why have nightly builds?</h4>
+  <p>
+    When developing a library, often some components like other libraries or the
+    language interpreter will use the latest available version. This can lead to
+    nasty situations when an upstream component releases a new version that
+    breaks your tests, but you don't find out until your next git push.
+    Nightli.es ensures each project builds at least once every 24 hours so these
+    failures will be caught as soon as possible.
+  </p>
+  <h4>Why does Nightli.es require so many GitHub permssions?</h4>
+  <p>
+    Nightli.es uses the Travis API to get the list of projects you have access
+    to and to kick off builds. Unfortunately Travis' GitHub authentication
+    integration requires that I request all the same permissions as Travis
+    itself. Your GitHub OAuth tokens are never stored server-side, only your
+    Travis API token is stored fur use in starting builds via the API.
+  </p>
+  <h4>Get Started</h4>
   <p class="cta">
-    <a class="btn btn-primary" href="/login">Get Started</a>
+    <a class="btn btn-primary" href="/login">Log in with GitHub</a>
   </p>
 </div>

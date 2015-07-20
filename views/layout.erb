@@ -30,7 +30,7 @@
             <li><p class="navbar-text"><%= github_user.login %></p></li>
             <li><a href="/logout">Log out</a></li>
             <% else %>
-            <li><a href="/login">Log in</a></li>
+            <li><a href="/login">Log in with GitHub</a></li>
             <% end %>
           </ul>
         </div><!--/.nav-collapse -->
@@ -41,6 +41,17 @@
       <%= yield %>
     </div><!-- /.container -->
 
+
+    <footer class="footer">
+      <div class="container">
+        <div class="pull-left">
+          Copyright 2015, <a href="https://coderanger.net/">Noah Kantrowitz</a>
+        </div>
+        <div class="pull-right">
+          <a href="https://github.com/coderanger/nightlies">View the code on GitHub</a>
+        </div>
+      </div>
+    </footer>
 
     <script src="/js/jquery.js"></script>
     <script src="/js/bootstrap.js"></script>
