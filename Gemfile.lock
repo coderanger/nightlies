@@ -63,6 +63,7 @@ GEM
       sinatra (~> 1.0)
       warden-github (~> 1.2.0)
     slop (3.6.0)
+    snitcher (0.3.1)
     sqlite3 (1.3.10)
     thin (1.6.3)
       daemons (~> 1.0, >= 1.0.9)
@@ -103,6 +104,7 @@ DEPENDENCIES
   sequel
   sinatra
   sinatra_auth_github
+  snitcher
   sqlite3
   thin
   travis

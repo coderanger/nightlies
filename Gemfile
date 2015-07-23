@@ -25,6 +25,7 @@ gem 'warden-github'
 gem 'sinatra_auth_github'
 gem 'sequel'
 gem 'rake'
+gem 'snitcher'
 
 group :production do
   gem 'pg'

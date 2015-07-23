@@ -14,6 +14,10 @@
 # limitations under the License.
 #
 
+require 'benchmark'
+
+require 'snitcher'
+
 require_relative './model'
 
 task :schema do
@@ -21,5 +25,6 @@ task :schema do
 end
 
 task :run do
-  Nightlies::Model.run!
+  time = Benchmark.realtime { Nightlies::Model.run! }
+  Snitcher.snitch(ENV['SNITCH_ID'], message: "Finished in #{time} seconds.") if ENV['SNITCH_ID']
 end
