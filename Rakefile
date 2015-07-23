@@ -26,5 +26,7 @@ end
 
 task :run do
   time = Benchmark.realtime { Nightlies::Model.run! }
-  Snitcher.snitch(ENV['SNITCH_ID'], message: "Finished in #{time} seconds.") if ENV['SNITCH_ID']
+  msg = "Finished in #{time} seconds."
+  puts(msg)
+  Snitcher.snitch(ENV['SNITCH_ID'], message: msg) if ENV['SNITCH_ID']
 end
