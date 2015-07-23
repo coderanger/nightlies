@@ -17,6 +17,7 @@
 require 'sinatra'
 require 'sinatra_auth_github'
 require 'tilt/erb'
+require 'librato-rack'
 
 require_relative './model'
 require_relative './warden_travis/strategy'
@@ -29,6 +30,9 @@ module Nightlies
       set :session_secret, ENV['GITHUB_VERIFIER_SECRET']
       set :public_folder, 'public'
       use Rack::Protection::AuthenticityToken
+
+      # Load librato
+      use Librato::Rack if ENV['LIBRATO_TOKEN']
 
       # Load the GithHub authentication stuffs.
       set :github_options, {scopes: 'read:org user:email repo:status write:repo_hook repo_deployment'}

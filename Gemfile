@@ -26,6 +26,7 @@ gem 'sinatra_auth_github'
 gem 'sequel'
 gem 'rake'
 gem 'snitcher'
+gem 'librato-rack'
 
 group :production do
   gem 'pg'
