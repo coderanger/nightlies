@@ -55,37 +55,37 @@ module Nightlies
     def self.run!
       failure = true
       db[:nightlies].each do |data|
-        # Skip disabled repos.
-        next unless data[:travis_token]
-        slug = "#{data[:owner]}/#{data[:name]}"
-        puts "[#{slug}] Checking."
-        travis = Travis::Client.new(access_token: data[:travis_token])
-        repo = travis.repo(slug)
-        # Could speed this up in the future.
-        last_push_build = repo.builds(event_type: 'push').first
-        last_api_build = repo.builds(event_type: 'api').first
-        if (last_push_build && last_push_build.pending?) || (last_api_build && last_api_build.pending?)
-          # Currently building, we're done here.
-          puts "[#{slug}] Already building."
-          next
-        end
-        build_times = [data[:last_nightly] || Time.at(0)]
-        build_times << last_push_build.finished_at if last_push_build
-        build_times << last_api_build.finished_at if last_api_build
-        last_build_time = build_times.max
-        # Check if it has been 23.5 hours since the last build. The 0.5 is so
-        # that if the last build was kicked off by us slightly more than 24
-        # hours ago, we don't drift back by an hour each day.
-        if Time.now - last_build_time > 60*60*23.5
-          puts "[#{slug}] Requesting a build, last build time #{last_build_time}."
-          begin
+        begin
+          # Skip disabled repos.
+          next unless data[:travis_token]
+          slug = "#{data[:owner]}/#{data[:name]}"
+          puts "[#{slug}] Checking."
+          travis = Travis::Client.new(access_token: data[:travis_token])
+          repo = travis.repo(slug)
+          # Could speed this up in the future.
+          last_push_build = repo.builds(event_type: 'push').first
+          last_api_build = repo.builds(event_type: 'api').first
+          if (last_push_build && last_push_build.pending?) || (last_api_build && last_api_build.pending?)
+            # Currently building, we're done here.
+            puts "[#{slug}] Already building."
+            next
+          end
+          build_times = [data[:last_nightly] || Time.at(0)]
+          build_times << last_push_build.finished_at if last_push_build
+          build_times << last_api_build.finished_at if last_api_build
+          last_build_time = build_times.max
+          # Check if it has been 23.5 hours since the last build. The 0.5 is so
+          # that if the last build was kicked off by us slightly more than 24
+          # hours ago, we don't drift back by an hour each day.
+          if Time.now - last_build_time > 60*60*23.5
+            puts "[#{slug}] Requesting a build, last build time #{last_build_time}."
             self.run_build!(travis, slug)
             db[:nightlies].filter(id: data[:id]).update(last_nightly: Time.now)
-            # If any succeed then we probably aren't globally down.
-            failure = false
-          rescue Exception => ex
-            puts "[#{slug}] ERROR: #{ex}"
           end
+          # If any succeed then we probably aren't globally down.
+          failure = false
+        rescue Exception => ex
+          puts "[#{slug}] ERROR: #{ex}"
         end
       end
       raise "All builds failed" if failure
