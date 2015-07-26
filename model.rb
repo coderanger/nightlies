@@ -53,6 +53,7 @@ module Nightlies
     end
 
     def self.run!
+      failure = false
       db[:nightlies].each do |data|
         # Skip disabled repos.
         next unless data[:travis_token]
@@ -77,10 +78,16 @@ module Nightlies
         # hours ago, we don't drift back by an hour each day.
         if Time.now - last_build_time > 60*60*23.5
           puts "Requesting a build of #{slug}, last build time #{last_build_time}."
-          self.run_build!(travis, slug)
-          db[:nightlies].filter(id: data[:id]).update(last_nightly: Time.now)
+          begin
+            self.run_build!(travis, slug)
+            db[:nightlies].filter(id: data[:id]).update(last_nightly: Time.now)
+          rescue Exception => ex
+            puts "ERROR: #{ex}"
+            failure = true
+          end
         end
       end
+      raise "One or more builds failed" if failure
     end
 
     def self.run_build!(travis, slug)
