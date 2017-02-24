@@ -2,8 +2,10 @@
   <h2>Dashboard</h2>
   <% @repos.each do |repo| %>
   <p class="dashboard-row">
-    <input type="checkbox" class="btn-switch" data-repoid="<%= repo['id'] %>" data-slug="<%= "#{repo['owner_name']}/#{repo['name']}" %>" <% if repo['enabled'] %>checked="checked"<% end %>>
-    <span class="dashboard-slug"><%= repo['owner_name'] %>/<%= repo['name'] %></span>
+    <% repo_slug = "#{repo['owner_name']}/#{repo['name']}" %>
+    <input type="checkbox" class="btn-switch" data-repoid="<%= repo['id'] %>" data-slug="<%= repo_slug %>" <% if repo['enabled'] %>checked="checked"<% end %>>
+    <span class="dashboard-slug"><%= repo_slug %></span>
+    <a href=<%= "https://github.com/#{repo_slug}" %>><span class="glyphicon glyphicon-link"></span></a>
     <span class="dashboard-description"><%= repo['description'] %></span>
   </p>
   <% end %>
